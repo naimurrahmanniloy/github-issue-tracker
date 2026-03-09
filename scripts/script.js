@@ -151,6 +151,16 @@ const displayCard = (data) => {
     }
   });
 };
+
+// modal
+const modal = async (id) => {
+  const res = await fetch(
+    `https://phi-lab-server.vercel.app/api/v1/lab/issue/${id}`,
+  );
+  const data = await res.json();
+  displayModal(data.data);
+};
+
 // search function
 const loadSearchData = async (searchKey) => {
   const res = await fetch(
