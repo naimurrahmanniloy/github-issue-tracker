@@ -5,6 +5,20 @@ const cardsCount = document.getElementById("cardsCount");
 const openIssues = [];
 const closedIssues = [];
 
+// loading
+
+const loading = (value) => {
+  if (value === true) {
+    document.getElementById("issueCards").classList.add("hidden");
+    document.getElementById("spnner").classList.add("flex");
+    document.getElementById("spnner").classList.remove("hidden");
+  } else {
+    document.getElementById("spnner").classList.add("hidden");
+    document.getElementById("spnner").classList.remove("flex");
+    document.getElementById("issueCards").classList.remove("hidden");
+  }
+};
+
 //Load all issues card
 const loadAllIssuesCard = async () => {
   loading(true);
@@ -23,6 +37,42 @@ const loadAllIssuesCard = async () => {
   });
   displayCard(data.data);
   loading(false);
+};
+// button toggle
+
+document.getElementById("btn-open").addEventListener("click", () => {
+  loading(true);
+  setTimeout(() => {
+    displayCard(openIssues);
+    loading(false);
+  }, 200);
+  btnToggle("btn-open");
+});
+document.getElementById("btn-closed").addEventListener("click", async () => {
+  loading(true);
+  setTimeout(() => {
+    displayCard(closedIssues);
+    loading(false);
+  }, 200);
+  btnToggle("btn-closed");
+});
+document.getElementById("btn-all").addEventListener("click", () => {
+  loadAllIssuesCard();
+  btnToggle("btn-all");
+});
+
+const btnToggle = (id) => {
+  const btn = document.getElementById(id);
+  document
+    .getElementById("btn-all")
+    .classList.remove("btn-primary", "text-white");
+  document
+    .getElementById("btn-closed")
+    .classList.remove("btn-primary", "text-white");
+  document
+    .getElementById("btn-open")
+    .classList.remove("btn-primary", "text-white");
+  btn.classList.add("btn-primary", "text-white");
 };
 
 // displaying cards data
@@ -101,3 +151,29 @@ const displayCard = (data) => {
     }
   });
 };
+// search function
+const loadSearchData = async (searchKey) => {
+  const res = await fetch(
+    `https://phi-lab-server.vercel.app/api/v1/lab/issues/search?q=${searchKey}`,
+  );
+  const data = await res.json();
+  displayCard(data.data);
+};
+
+const input = document.getElementById("searchValue");
+input.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    if (input.value === "") {
+      return;
+    }
+    loadSearchData(input.value);
+  }
+});
+document.getElementById("searchBtn").addEventListener("click", () => {
+  if (input.value === "") {
+    return;
+  }
+  loadSearchData(input.value);
+});
+
+loadAllIssuesCard();
