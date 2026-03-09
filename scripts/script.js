@@ -161,6 +161,84 @@ const modal = async (id) => {
   displayModal(data.data);
 };
 
+// display modal
+
+const displayModal = (data) => {
+  const modalParent = document.getElementById("my_modal_5");
+  modalParent.innerHTML = "";
+  modalParent.innerHTML = `
+    <div class="modal-box mb-16 md:mb-0 md:w-9/12 md:min-w-4xl">
+    <h3 class="text-2xl text-start font-bold">${data.title}</h3>
+    <p class="py-4 text-sm font-bold text-gray-500 flex items-center gap-2">
+    <span id="badge-${data.id}" class='badge bg-[#00A96E] text-white p-3'>${data.status.toUpperCase()}</span>
+ 
+    <span>• Opened by ${data.assignee}</span> 
+    <span>•${data.createdAt}</span></p>
+    <div id="labelModal-${data.id}">
+    </div>
+    <p class='mt-3 text-gray-500'>${data.description}</p>
+
+    <div class='flex gap-30 mt-6 bg-gray-100 p-5 rounded-xl'>
+    <div class='font-bold text-sm'><p class='font-semibold mb-2 text-gray-500'>Assignee: </p> <p>${data.author}</p></div>
+    <div>
+    <div class='font-bold text-sm'>
+    <p class='font-semibold mb-2 text-gray-500'>Priority: </p>
+     <p class='badge' id='mod-${data.id}'>${data.priority.toUpperCase()}</p>
+     </div>
+     </div>
+    </div>
+    <div class="modal-action">
+      <form method="dialog">
+        <!-- if there is a button in form, it will close the modal -->
+        <button class="btn btn-primary">Close</button>
+      </form>
+    </div>
+  </div>
+    `;
+
+  let labelModal = document.getElementById(`labelModal-${data.id}`);
+  // labelModal=''
+  data.labels.forEach((l) => {
+    if (l === "bug") {
+      labelModal.innerHTML += `
+                                    <div class="badge bg-[#FEECEC] text-red-500"><img src="./assets/BugDroid.png" alt="">${l.toUpperCase()}
+                            </div>
+                                    `;
+    } else if (l === "enhancement") {
+      labelModal.innerHTML += `
+            <div class="badge  bg-green-100 text-green-600"><i class="fa-solid fa-wand-magic-sparkles"></i><span>${l.toUpperCase()}</span></div>
+            `;
+    } else if (l === "help wanted") {
+      labelModal.innerHTML += `
+                <div class="badge bg-[#FFF8DB] text-[#D97706]"><img src="./assets/Lifebuoy.png" alt="">${l.toUpperCase()}</div>
+                `;
+    } else {
+      labelModal.innerHTML += `
+            <div class="badge  bg-gray-100 text-gray-600"><i class="fa-solid fa-circle-exclamation"></i><span>${l.toUpperCase()}</span></div>
+            `;
+    }
+
+    const badge = document.getElementById(`badge-${data.id}`);
+    if (data.status === "closed") {
+      badge.classList.remove("bg-[#00A96E]");
+      badge.classList.add("bg-[#A855F7]");
+    }
+    // dynamic priority set
+    const mod = document.getElementById(`mod-${data.id}`);
+    if (data.priority === "high") {
+      mod.classList.add("text-red-500", "bg-[#FEECEC]");
+      mod.classList.remove("bg-[#FFF8DB]", "text-[#D97706]");
+    } else if (data.priority === "low") {
+      mod.classList.remove("text-red-500", "bg-[#FEECEC]");
+      mod.classList.add("bg-white", "text-gray-500");
+    } else {
+      mod.classList.remove("text-red-500", "bg-[#FEECEC]");
+      mod.classList.add("bg-[#FFF8DB]", "text-[#D97706]");
+    }
+  });
+  // call the modal
+  my_modal_5.showModal();
+};
 // search function
 const loadSearchData = async (searchKey) => {
   const res = await fetch(
